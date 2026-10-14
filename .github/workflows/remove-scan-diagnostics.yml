@@ -1,7 +1,10 @@
 name: Apply La Ficha no-diagnostics patch
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/remove-scan-diagnostics.yml"
 
 permissions:
   contents: write
