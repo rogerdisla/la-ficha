@@ -1,5 +1,6 @@
 name: Apply La Ficha auto-capture fix
 
+# Trigger corrected auto-capture patch
 on:
   push:
     branches: [main]
