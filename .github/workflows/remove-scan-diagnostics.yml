@@ -14,83 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Remove scan diagnostics only
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          path = Path("index.html")
-          html = path.read_text()
-
-          html = re.sub(
-              r'\n#lfDiagnostics\{.*?\}\n'
-              r'#lfDiagnostics \.lfDiagText,#lfDiagSaveStatus\{.*?\}\n'
-              r'#lfDiagnostics summary\{.*?\}\n'
-              r'#lfDiagnostics \.lfDiagActions\{.*?\}\n'
-              r'#lfDiagnostics \.lfDiagActions button\{.*?\}\n'
-              r'#lfDiagnostics #lfDiagPhoto\{.*?\}\n',
-              '\n',
-              html,
-              count=1,
-              flags=re.S
-          )
-
-          pattern = re.compile(
-              r"let lfDiagStartedAt=0,lfDiagSamples=\[\],lfDiagCamera=null,lfDiagVideoFrame=null,"
-              r"lfLastPresentedFrame=null,lfLastMediaTime=null,lfCaptureNeedsTap=false,lfDiagLast=null;"
-              r".*?"
-              r"\$\('lfDiagClose'\)\.onclick=.*?"
-              r"window\.addEventListener\('resize',\(\)=>\{if\(liveCameraModal\.classList\.contains\('show'\)\)lfFitFullFrameGuide\(\)\}\);",
-              re.S
-          )
-
-          m = pattern.search(html)
-          if not m:
-              raise SystemExit("Diagnostic UI block not found; refusing to alter another version.")
-
-          replacement = """let lfDiagStartedAt=0,lfDiagSamples=[],lfDiagCamera=null,lfDiagVideoFrame=null,lfLastPresentedFrame=null,lfLastMediaTime=null,lfCaptureNeedsTap=false;
-/* Scan diagnostic UI intentionally removed. Internal timing/sample variables are
-   preserved because the current camera/counting pipeline uses them. */
-const lfDiagPanel={style:{display:'none'}};
-function lfRenderDiagnostics(){/* diagnostics disabled */}
-window.addEventListener('resize',()=>{if(liveCameraModal.classList.contains('show'))lfFitFullFrameGuide()});"""
-
-          html = html[:m.start()] + replacement + html[m.end():]
-
-          forbidden = [
-              "Enlarge dots",
-              "Save diagnostic report",
-              "Save captured photo",
-              "Scan diagnostics",
-              "lfDiagEnlarge",
-              "lfDiagExport",
-              "lfDiagPhoto",
-              "lfDiagOverlay",
-          ]
-          leftovers = [x for x in forbidden if x in html]
-          if leftovers:
-              raise SystemExit("Diagnostics still present: " + ", ".join(leftovers))
-
-          path.write_text(html)
-          PY
-
-      - name: Verify exact expected patched file
-        shell: bash
+      - name: Patch index.html
+        run: python3 remove_scan_diagnostics.py
+      - name: Verify exact patched blob
         run: |
           ACTUAL=$(git hash-object index.html)
           EXPECTED="cb94fad299908cf861a5ad257b57294a8996d868"
           echo "Patched blob SHA: $ACTUAL"
           test "$ACTUAL" = "$EXPECTED"
-
-      - name: Commit replacement and remove one-time workflow
-        shell: bash
+      - name: Commit patched app
         run: |
-          rm -f .github/workflows/remove-scan-diagnostics.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html .github/workflows/remove-scan-diagnostics.yml
+          git add index.html
           git commit -m "Remove scan diagnostics from La Ficha"
           git push
