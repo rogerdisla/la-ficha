@@ -1,4 +1,4 @@
-name: Apply La Ficha no-diagnostics patch
+name: Apply La Ficha auto-capture fix
 
 on:
   push:
@@ -14,18 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch index.html
-        run: python3 remove_scan_diagnostics.py
-      - name: Verify exact patched blob
+
+      - name: Restore automatic capture retry
+        run: python3 fix_auto_capture.py
+
+      - name: Verify exact fixed app blob
         run: |
           ACTUAL=$(git hash-object index.html)
-          EXPECTED="cb94fad299908cf861a5ad257b57294a8996d868"
-          echo "Patched blob SHA: $ACTUAL"
+          EXPECTED="efa4e4b92067dbfe81c4f2e0ec1211ecafd8f8f5"
+          echo "Fixed blob SHA: $ACTUAL"
           test "$ACTUAL" = "$EXPECTED"
-      - name: Commit patched app
+
+      - name: Commit fixed app and clean temporary patch files
         run: |
+          rm -f fix_auto_capture.py remove_scan_diagnostics.py .github/workflows/remove-scan-diagnostics.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Remove scan diagnostics from La Ficha"
+          git add -A
+          git commit -m "Restore La Ficha automatic camera capture"
           git push
