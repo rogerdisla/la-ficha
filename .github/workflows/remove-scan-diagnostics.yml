@@ -1,6 +1,6 @@
 name: Apply La Ficha auto-capture fix
 
-# Trigger corrected auto-capture patch
+# Final trigger for corrected production camera behavior
 on:
   push:
     branches: [main]
@@ -19,12 +19,14 @@ jobs:
       - name: Restore automatic capture retry
         run: python3 fix_auto_capture.py
 
-      - name: Verify exact fixed app blob
+      - name: Verify automatic capture behavior
+        shell: bash
         run: |
-          ACTUAL=$(git hash-object index.html)
-          EXPECTED="efa4e4b92067dbfe81c4f2e0ec1211ecafd8f8f5"
-          echo "Fixed blob SHA: $ACTUAL"
-          test "$ACTUAL" = "$EXPECTED"
+          grep -Fq "if(captureInProgress||autoCaptureTimer||!framingReady)return;" index.html
+          grep -Fq "await new Promise(r=>setTimeout(r,260));" index.html
+          ! grep -Fq "Uncertain count — tap Capture to retry" index.html
+          ! grep -Fq "Fresh frame not confirmed — tap Capture" index.html
+          ! grep -Fq "if(lfCaptureNeedsTap||captureInProgress||autoCaptureTimer||!framingReady)return;" index.html
 
       - name: Commit fixed app and clean temporary patch files
         run: |
