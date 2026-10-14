@@ -12,6 +12,7 @@ html = html.replace(old_gate, new_gate, 1)
 
 pattern_uncertain = re.compile(
     r"""    lfCaptureNeedsTap=true;
+    if\(consensus\)lfRenderDiagnostics\(consensus\);
     console\.info\('\[La Ficha consensus retry\]',consensus\);
     captureInProgress=false;
     if\(captureBtn\)captureBtn\.disabled=false;
@@ -21,9 +22,9 @@ pattern_uncertain = re.compile(
     return;"""
 )
 
-replacement_uncertain = """    console.info('[La Ficha consensus retry]',consensus);
+replacement_uncertain = """    lfCaptureNeedsTap=false;
+    console.info('[La Ficha consensus retry]',consensus);
     captureInProgress=false;
-    lfCaptureNeedsTap=false;
     if(captureBtn)captureBtn.disabled=false;
     if(status)status.textContent=framingText('unstable');
 
