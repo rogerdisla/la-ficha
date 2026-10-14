@@ -3720,7 +3720,7 @@ function cancelAutoCapture(){
 }
 
 function scheduleAutoCapture(){
-  if(lfCaptureNeedsTap||captureInProgress||autoCaptureTimer||!framingReady)return;
+  if(captureInProgress||autoCaptureTimer||!framingReady)return;
   autoCaptureStartedAt=performance.now();
   const s=$('framingStatus');
   if(s)s.textContent=framingText('capturing');
@@ -4519,14 +4519,17 @@ async function captureLiveCameraPhoto(){
       return;
     }
 
-    lfCaptureNeedsTap=true;
-    if(consensus)lfRenderDiagnostics(consensus);
+    lfCaptureNeedsTap=false;
     console.info('[La Ficha consensus retry]',consensus);
     captureInProgress=false;
     if(captureBtn)captureBtn.disabled=false;
     if(status)status.textContent=framingText('unstable');
-    startFramingAssistant();
-    if(status)status.textContent='Uncertain count — tap Capture to retry';
+
+    /* Automatically re-arm after an uncertain burst instead of requiring a tap. */
+    await new Promise(r=>setTimeout(r,260));
+    if(liveCameraModal&&liveCameraModal.classList.contains('show')){
+      startFramingAssistant();
+    }
     return;
 
     /* Compatibility fallback if a device cannot supply enough burst frames. */
@@ -4556,14 +4559,14 @@ async function captureLiveCameraPhoto(){
       showGuidedCameraRequirement();
     }
   }catch(err){
-    lfCaptureNeedsTap=true;
+    lfCaptureNeedsTap=false;
     console.error('Consensus capture failed',err);
     captureInProgress=false;
     if(captureBtn)captureBtn.disabled=false;
     if(liveCameraModal&&liveCameraModal.classList.contains('show')){
       if(status)status.textContent=framingText('unstable');
+      await new Promise(r=>setTimeout(r,260));
       startFramingAssistant();
-      if(status)status.textContent='Fresh frame not confirmed — tap Capture';
     }else{
       showGuidedCameraRequirement();
     }
