@@ -3242,6 +3242,20 @@ html{
 }
 </style>
 
+
+<style id="lf-v8-18-6-header-position-test">
+/* Diagnostic: shift only the controls below the iOS top-edge blur band.
+   Preserve the hero/logo and remaining page layout at their existing positions. */
+.top.lf-header {
+  margin-top:36px !important;
+  margin-bottom:-36px !important;
+  z-index:40 !important;
+}
+/* Keep header buttons sharp without altering the app's other glass buttons. */
+.top.lf-header, .top.lf-header button {
+  -webkit-filter:none !important; filter:none !important;
+}
+</style>
 </head><body data-la-ficha-baseline="v1.8.8" data-component="app-background">
 <div id="ios27TopEdgePaint" aria-hidden="true"></div>
 <div class="app lf-app-shell" data-component="app-shell">
@@ -7697,5 +7711,5 @@ window.__LA_FICHA_BASELINE__ = Object.freeze({
   })
 });
 </script>
-<div id="lfBuildIdentifier" style="position:fixed;right:6px;bottom:3px;z-index:99999;padding:2px 5px;border-radius:4px;background:#10233b;color:white;font:10px Arial;pointer-events:none">Build v8.18.5 · iOS 27 Blur Fix</div>
+<div id="lfBuildIdentifier" style="position:fixed;right:6px;bottom:3px;z-index:99999;padding:2px 5px;border-radius:4px;background:#10233b;color:white;font:10px Arial;pointer-events:none">Build v8.18.6 · Header Position Test</div>
 </body></html>
