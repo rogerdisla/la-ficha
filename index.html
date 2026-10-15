@@ -3256,6 +3256,17 @@ html{
   -webkit-filter:none !important;
   filter:none !important;
 }
+
+/* v8.18.8 — winner headline fit (winner screen only; locked baseline unchanged) */
+.lf-winner .winKicker {
+  box-sizing: border-box !important;
+  font-size: clamp(27px, 9vw, 40px) !important;
+  line-height: 1.08 !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.025em !important;
+  padding-inline: 4px !important;
+  overflow: visible !important;
+}
 </style>
 </head><body data-la-ficha-baseline="v1.8.8" data-component="app-background">
 <div id="ios27TopEdgePaint" aria-hidden="true"></div>
@@ -7711,5 +7722,36 @@ window.__LA_FICHA_BASELINE__ = Object.freeze({
     winner: '[data-component="winner"]'
   })
 });
+</script>
+
+<script>
+/* v8.18.8: Fit the localized winner headline inside its card on iPhone screens. */
+(() => {
+  const screen = document.getElementById('winner');
+  const title = document.getElementById('winKicker');
+  if (!screen || !title) return;
+
+  function fitWinnerHeadline() {
+    if (!screen.classList.contains('show') || !title.clientWidth) return;
+    let fontSize = Math.min(40, Math.max(27, window.innerWidth * 0.09));
+    const availableWidth = Math.max(1, title.clientWidth - 12);
+    const range = document.createRange();
+    range.selectNodeContents(title);
+    for (let pass = 0; pass < 5; pass++) {
+      title.style.setProperty('font-size', fontSize + 'px', 'important');
+      const textWidth = range.getBoundingClientRect().width;
+      if (textWidth <= availableWidth || textWidth <= 0) break;
+      fontSize = Math.max(18, fontSize * (availableWidth / textWidth) * 0.98);
+    }
+    range.detach?.();
+  }
+
+  const requestFit = () => requestAnimationFrame(fitWinnerHeadline);
+  new MutationObserver(requestFit).observe(screen, {attributes: true, attributeFilter: ['class']});
+  new MutationObserver(requestFit).observe(title, {childList: true, characterData: true, subtree: true});
+  window.addEventListener('resize', requestFit, {passive: true});
+  document.fonts?.ready?.then(requestFit);
+  requestFit();
+})();
 </script>
 </body></html>
