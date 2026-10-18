@@ -3319,7 +3319,7 @@ html::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:n
 /* Logo visibility fix: reserve space for the baked-in wooden sign. Background artwork already contains the wooden La Ficha logo.
    Remove the invisible placeholder and redundant 240px hero spacer,
    retaining 40px breathing room after the language header. */
-.lf-hero.hero { padding-top: clamp(166px, 24.5vh, 213px) !important; }
+.lf-hero.hero { padding-top: clamp(151px, calc(24.5vh - 15px), 198px) !important; }
 .lf-hero .logoWrap { display: none !important; }
 </style>
 </head><body data-la-ficha-baseline="v1.8.8" data-component="app-background">
