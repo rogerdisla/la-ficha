@@ -3322,6 +3322,21 @@ html::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:n
 .lf-hero.hero { padding-top: clamp(136px, calc(24.5vh - 30px), 183px) !important; }
 .lf-hero .logoWrap { display: none !important; }
 </style>
+<style id="lf-header-sharpness-only-test">
+/* Header-only rendering fix: no dimensions, positions, or spacing changed. */
+.langSwitch, .langSwitch button, .iconBtn, .lf-hero .langSwitch, .lf-hero .iconBtn {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+.langSwitch button::before, .iconBtn::before {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+/* Avoid Safari compositor blur of the background's top edge. */
+html::before { filter: none !important; -webkit-filter: none !important; transform: none !important; }
+</style>
 </head><body data-la-ficha-baseline="v1.8.8" data-component="app-background">
 <div id="ios27TopEdgePaint" aria-hidden="true"></div>
 <div class="app lf-app-shell" data-component="app-shell">
