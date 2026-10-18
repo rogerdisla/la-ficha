@@ -3271,10 +3271,14 @@ html{
   overflow: visible !important;
 }
 </style>
-<style id="la-ficha-top-safe-area-blend-test">
-/* Visual-only test: preserve all existing positioning and functionality. */
-html { background-color: #17365d; }
-body { background: linear-gradient(180deg, #2c638c 0, #17365d 125px, #17365d 100%); }
+<style id="la-ficha-top-safe-area-natural-continuation">
+/* Use the existing tropical image, not a gradient or blurred overlay.
+   Keep the verified clear-header spacing and all app controls unchanged. */
+@media (display-mode: standalone) {
+  html { background: transparent !important; }
+  body { background-position: center top !important; }
+  #ios27TopEdgePaint { background: transparent !important; }
+}
 </style>
 </head><body data-la-ficha-baseline="v1.8.8" data-component="app-background">
 <div id="ios27TopEdgePaint" aria-hidden="true"></div>
