@@ -3314,7 +3314,15 @@ html::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:n
 .lf-hero .logoWrap { height: clamp(128px, 19vh, 174px) !important; min-height:128px !important; margin:12px auto 16px !important; visibility:visible !important; }
 .lf-hero .logoWrap .logoImg { visibility:hidden !important; }
 @media (display-mode: standalone) { #ios27TopEdgePaint {background:transparent !important;} }
-</style></head><body data-la-ficha-baseline="v1.8.8" data-component="app-background">
+</style>
+<style id="lf-compact-hero-spacing-test">
+/* Logo visibility fix: reserve space for the baked-in wooden sign. Background artwork already contains the wooden La Ficha logo.
+   Remove the invisible placeholder and redundant 240px hero spacer,
+   retaining 40px breathing room after the language header. */
+.lf-hero.hero { padding-top: clamp(195px, 28vh, 245px) !important; }
+.lf-hero .logoWrap { display: none !important; }
+</style>
+</head><body data-la-ficha-baseline="v1.8.8" data-component="app-background">
 <div id="ios27TopEdgePaint" aria-hidden="true"></div>
 <div class="app lf-app-shell" data-component="app-shell">
   <div class="top lf-header" data-component="header">
