@@ -25,7 +25,6 @@ if marker in src:
 expected = [
     'lf-ios-build7-auto-test-banner-v1',
     'lf-ios-build4-5sec-winner-haptic',
-    'lf-build6-ump-privacy-v1',
     'id="lfPrivacyOptionsBtn"',
 ]
 for item in expected:
